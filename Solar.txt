@@ -1,0 +1,17 @@
+Solar System Design
+
+Stars: 2 - "Ydrogono" , "Ilio"
+
+Moons: 2 - "Petra" , "Vrachos"
+
+Planets: 7 - "Agonos" , "Fotia" , "Erimos" , "Pyrinas" , "Dachtylidi" , "Vronti" , "Pagos" 
+
+Dwarfs: 2 - "Mikro" , "Ligo"
+
+Comets: 2 - "Oura" , "Spitha"
+
+One Day: 20 hrs
+
+One Year: 542 day (452 earth days)
+
+Planetary Tilt: 15 deg
