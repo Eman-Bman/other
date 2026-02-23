@@ -28,13 +28,14 @@ let startTime = Date.now();
 const starCount = 300
 const objRadDispMult = 5
 const GRAV = 3e-6
-const pathLimit = 200
-const numFrames = 600; // adjust as needed
+const pathLimit = 20
+const numFrames = 360; // adjust as needed
 const debug = true
-const gravSteps = 3000
-const zoom = 1
+const gravSteps = 1000
+const zoom = [30,1,0.03]
 const speed = 2
-const center = "Pyrinas-"
+const center = ["Pyrinas","X","X"]
+let t = 0;
 
 // === CANVAS DIMENSIONS ===
 const width = 1000;
@@ -43,7 +44,7 @@ const height = 1000;
 // === CONFIGURATION ===
 const frameRate = 30; // frames per second
 const inputFile = "initial.json";
-const outputFile = "output.mp4";
+const outputFile = "system.mp4";
 
 // === CANVAS SETUP ===
 const canvas = createCanvas(width, height);
@@ -175,12 +176,29 @@ function writeFrame(ffmpeg, frameBuffer) {
     });
 }
 
+async function checkOffscreen(x,y,j) {
+    if (x>1000+1000*j || x<1000*j || y>1000 || y<0) {
+        return true
+    } else {
+        return false
+    }
+}
+let j;
+let rem;
 (async () => {
     for (let frameCount = 0; frameCount < numFrames; frameCount++) {
         // === PHYSICS CALCULATIONS ===
         if (!frameCount == 0) {
             // = Gravity =
-            for (let i = 0; i < gravSteps * speed; i++)
+            let speedMult = (10**Math.floor(((frameCount-30)*3)/(numFrames)))
+            j = Math.floor(((frameCount-30)*3)/(numFrames))
+            rem = (((frameCount-30)*3)/(numFrames))%1*4-3
+            if (rem > 0 && j+1 < zoom.length) {
+                speedMult = Math.floor(speedMult*(10**rem))
+            }
+            if (speedMult<1) speedMult = 1
+            t += speed * speedMult
+            for (let i = 0; i < gravSteps * speed * speedMult; i++) {
                 for (const name of objNames) {
                     const object = objects[name]
                     for (const name2 of objNames) {
@@ -202,6 +220,7 @@ function writeFrame(ffmpeg, frameBuffer) {
                     object.x += object.vx / gravSteps
                     object.y += object.vy / gravSteps
                 }
+            }
             // = Path =
             for (const name of objNames) {
                 const object = objects[name]
@@ -221,43 +240,103 @@ function writeFrame(ffmpeg, frameBuffer) {
         ctx.drawImage(mapImage, 0, 0);
 
         // === OBJECT RENDERING ===
-        if (Object.keys(objects).includes(center)) {
-            centerX = -objects[center].x*5*zoom
-            centerY = -objects[center].y*5*zoom
+        j = Math.floor(((frameCount-30)*3)/(numFrames))
+        rem = (((frameCount-30)*3)/(numFrames))%1*4-3
+        if (j<0) {
+            j=0
+            rem = 0
         }
+        if (Object.keys(objects).includes(center[j])) {
+            centerX = -objects[center[j]].x*5*zoom[j]
+            centerY = -objects[center[j]].y*5*zoom[j]
+        } else {
+            centerX = 0
+            centerY = 0
+        }
+        let frameZoom = zoom[j]
+        if (rem > 0 && j+1 < zoom.length) {
+            if (Object.keys(objects).includes(center[j+1])) {
+                centerX = centerX*(1-rem) + -objects[center[j+1]].x*5*zoom[j+1]*(rem)
+                centerY = centerY*(1-rem) + -objects[center[j+1]].y*5*zoom[j+1]*(rem)
+            } else {
+                centerX = centerX*(1-rem)
+                centerY = centerY*(1-rem)
+            }
+            frameZoom = zoom[j]*(1-rem) + zoom[j+1]*rem
+        }
+        console.log(frameCount, Math.hypot(centerX, centerY), frameZoom)
+        let xOffset = 500 + centerX
+        let yOffset = 500 + centerY
+        let x;
+        let y;
         for (const name of objNames) {
             const object = objects[name]
             const pathFrames = Object.keys(object.path)
             if (pathFrames.length > 0) {
                 ctx.strokeStyle = 'white'
-                ctx.lineWidth = 1
                 ctx.beginPath()
-                const firstFrame = object.path[pathFrames[0]]
-                ctx.moveTo(firstFrame.x * 5 * zoom + 500 + centerX, firstFrame.y * 5 * zoom + 500 + centerY)
-                for (const frame of pathFrames) {
-                    ctx.lineTo(object.path[frame].x * 5 * zoom + 500 + centerX, object.path[frame].y * 5 * zoom + 500 + centerY)
+                let started = false
+                // const firstFrame = object.path[pathFrames[0]]
+                // ctx.moveTo(firstFrame.x * 5 * zoom[j] + xOffset, firstFrame.y * 5 * zoom[j] + yOffset)
+                for (let i = 0; i < pathFrames.length; i++) {
+                    const alpha = i / pathFrames.length
+                    ctx.globalAlpha = alpha
+                    ctx.lineWidth = 1
+                    x = object.path[pathFrames[i]].x * 5 * frameZoom + xOffset
+                    y = object.path[pathFrames[i]].y * 5 * frameZoom + yOffset
+                    // if (await checkOffscreen(x,y,j)) continue;
+                    if (!started) {
+                        ctx.moveTo(x, y)
+                        started = true
+                        continue
+                    }
+                    ctx.lineTo(x, y)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.moveTo(x, y)
                 }
-                ctx.stroke()
+                ctx.globalAlpha = 1
             }
             ctx.fillStyle = object.color
-            ctx.beginPath()
-            ctx.arc(object.x * 5 * zoom + 500 + centerX, object.y * 5 * zoom + 500 + centerY, object.radius*objRadDispMult, 0, PI * 2)
-            ctx.fill()
+            x = object.x * 5 * frameZoom + xOffset
+            y = object.y * 5 * frameZoom + yOffset
+            // if (await checkOffscreen(x,y,j) == false) {
+                ctx.beginPath()
+                ctx.arc(x, y, object.radius*objRadDispMult, 0, PI * 2)
+                ctx.fill()
+            // }
         }
 
+        // // === DIVIDING LINES ===
+        // ctx.strokeStyle = "white"
+        // ctx.lineWidth = 2
+        // ctx.beginPath()
+        // ctx.moveTo(1000, 0)
+        // ctx.lineTo(1000, 1000)
+        // ctx.stroke()
+        // ctx.beginPath()
+        // ctx.moveTo(2000, 0)
+        // ctx.lineTo(2000, 1000)
+        // ctx.stroke()
+
         // === DEBUG ===
-        if (debug) {
-            let i = 0
-            for (const name of objNames) {
-                i++;
-                const object = objects[name]
-                ctx.fillStyle = object.color
-                ctx.fillText(name,20, 20*i+10)
-                ctx.fillText(object.mass, 70, 20*i+10)
-                ctx.fillText(object.x,100, 20*i+10)
-                ctx.fillText(object.y,250, 20*i+10)
-            }
-        }
+        // if (debug) {
+        //     let i = 0
+        //     for (const name of objNames) {
+        //         i++;
+        //         const object = objects[name]
+        //         ctx.fillStyle = object.color
+        //         ctx.fillText(name,20, 20*i+10)
+        //         ctx.fillText(object.mass, 70, 20*i+10)
+        //         ctx.fillText(object.x,100, 20*i+10)
+        //         ctx.fillText(object.y,250, 20*i+10)
+        //     }
+        // }
+        ctx.fillStyle = "white"
+        ctx.font = "40px Arial";
+        ctx.fillText(`Frame: ${frameCount+1}/${numFrames}`, 20, 40)
+        // One year = t = 4600, 460 days/ year so 1 day = 10t, 20hrs/ day so 1 hr = 0.5t
+        ctx.fillText(`Year ${Math.floor(t/4600)}, Day ${Math.floor((t%4600)/10)%460}, Hour ${Math.floor((t%10)/0.5)%20}`, 20, 80)
 
         let frameBuffer = null;
         try {

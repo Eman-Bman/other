@@ -4,117 +4,117 @@
         "color": "rgb(240, 213, 117)",
         "mass": 2000000,
         "radius": 2,
-        "initR": 1,
+        "initR": 10,
         "initA": 0,
-        "initV": 0.7071067912
+        "initV": 0.182574
     },
     "Ilio": {
         "type": "star",
         "color": "rgb(155, 217, 224)",
         "mass": 1000000,
         "radius": 1.8,
-        "initR": -1,
+        "initR": -5,
         "initA": 0,
-        "initV": -1.414213562
+        "initV": -0.365148
     },
     "Agonos": {
         "type": "planet",
         "color": "rgb(110,105,100)",
         "mass": 8,
         "radius": 1,
-        "initR": 20,
+        "initR": 60,
         "initA": 0,
-        "initV": 0.7
+        "initV": 0.3873
     },
     "Fotia": {
         "type": "planet",
         "color": "rgb(212,92,6)",
         "mass": 9,
         "radius": 1,
-        "initR": 25,
+        "initR": 70,
         "initA": 0,
-        "initV": 0.61
+        "initV": 0.3586
     },
     "Erimos": {
         "type": "planet",
         "color": "rgb(112,19,9)",
         "mass": 10,
         "radius": 1,
-        "initR": 30,
+        "initR": 100,
         "initA": 0,
-        "initV": 0.55
+        "initV": 0.3
     },
     "Pyrinas": {
         "type": "planet",
         "color": "rgb(13,88,186)",
         "mass": 10,
         "radius": 1,
-        "initR": 35,
+        "initR": 150,
         "initA": 0,
-        "initV": 0.5
+        "initV": 0.2449
     },
     "Dachtylidi": {
         "type": "planet",
         "color": "rgb(3,84,10)",
         "mass": 15,
         "radius": 1.5,
-        "initR": 40,
+        "initR": 600,
         "initA": 0,
-        "initV": 0.46
+        "initV": 0.1225
     },
     "Vronti": {
         "type": "planet",
         "color": "rgb(72,75,94)",
         "mass": 12,
         "radius": 1.5,
-        "initR": 50,
+        "initR": 1000,
         "initA": 0,
-        "initV": 0.4
+        "initV": 0.0949
     },
     "Pagos": {
         "type": "planet",
         "color": "rgb(171,177,219)",
         "mass": 8,
         "radius": 1,
-        "initR": 60,
+        "initR": 2000,
         "initA": 0,
-        "initV": 0.37
+        "initV": 0.0671
     },
     "Mikro": {
         "type": "dwarf",
         "color": "rgb(196,185,181)",
         "mass": 1,
         "radius": 0.5,
-        "initR": 75,
+        "initR": 1300,
         "initA": 0,
-        "initV": 0.3
+        "initV": 0.069
     },
     "Ligo": {
         "type": "dwarf",
         "color": "rgb(175,153,176)",
         "mass": 1,
         "radius": 0.5,
-        "initR": 85,
+        "initR": 1600,
         "initA": 0,
-        "initV": 0.3
+        "initV": 0.072
     },
     "Oura": {
         "type": "comet",
         "color": "rgb(69,69,69)",
         "mass": 1,
         "radius": 0.5,
-        "initR": 90,
+        "initR": 800,
         "initA": 0,
-        "initV": 0.15
+        "initV": 0.05
     },
     "Spitha": {
         "type": "comet",
         "color": "rgb(196,196,196)",
         "mass": 1,
         "radius": 0.5,
-        "initR": 55,
+        "initR": 1800,
         "initA": 0,
-        "initV": 0.2
+        "initV": 0.05
     },
     "Petra": {
         "type": "moon",
@@ -122,9 +122,9 @@
         "color": "rgb(110,106,102)",
         "mass": 0.1,
         "radius": 0.3,
-        "initR": 0.1,
+        "initR": 0.25,
         "initA": 0,
-        "initV": 0.01
+        "initV": 0.0109544
     },
     "Vrachos": {
         "type": "moon",
@@ -132,8 +132,8 @@
         "color": "rgb(50,50,50)",
         "mass": 0.1,
         "radius": 0.3,
-        "initR": 0.15,
+        "initR": 0.5,
         "initA": 0,
-        "initV": 0.01
+        "initV": 0.007746
     }
 }
